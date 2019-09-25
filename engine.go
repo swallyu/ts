@@ -4,6 +4,12 @@ import (
 	"net/http"
 )
 
+type Param struct {
+	Key   string
+	Value string
+}
+type Params []Param
+
 type Context struct {
 	Resp   http.ResponseWriter
 	Req    *http.Request
