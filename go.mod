@@ -1,4 +1,4 @@
-module ysnet
+module ts
 
 go 1.12
 
