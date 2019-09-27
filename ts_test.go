@@ -1,22 +1,35 @@
 package ts
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"testing"
 )
 
-func TestRouter_Get(t *testing.T) {
+var fileServer = http.FileServer(http.Dir("./html"))
 
-	app := NewApp()
-
-	app.Get("/login", Index)
-	error := http.ListenAndServe(":8080", app)
-
-	fmt.Println(error)
+func ServeFiles(w http.ResponseWriter, r *http.Request) {
+	fileServer.ServeHTTP(w, r)
 }
 
-func Index(ctx *Context) {
-	ctx.Resp.Write([]byte("AASWD"))
-	fmt.Fprint(ctx.Resp, "Welcome!\n")
+func TestRouter_Get(t *testing.T) {
+
+	mux := NewRouter()
+	mux.GET("/", func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "index2.html"
+		ServeFiles(w, r)
+	})
+
+	mux.GET("/user", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello world user"))
+	})
+
+	mux.GET("/{file:.+}", func(w http.ResponseWriter, r *http.Request) {
+		//w.Write([]byte("hello world2"))
+		//id := GetParam(r, "file")
+
+		//w.Write([]byte("match user/:id ! get id:" + id))
+		ServeFiles(w, r)
+	})
+	log.Fatal(http.ListenAndServe(":8181", mux))
 }
