@@ -1,8 +1,12 @@
 package ts
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -10,6 +14,20 @@ var fileServer = http.FileServer(http.Dir("./html"))
 
 func ServeFiles(w http.ResponseWriter, r *http.Request) {
 	fileServer.ServeHTTP(w, r)
+}
+
+func TestApp_Get(t *testing.T) {
+
+	app := NewApp()
+
+	app.Router().Get("/user", func(ctx *Context) {
+		ctx.Text("sdef")
+	})
+
+	error := http.ListenAndServe(":8888", app)
+	if error != nil {
+		fmt.Println(error.Error())
+	}
 }
 
 func TestRouter_Get(t *testing.T) {
@@ -32,4 +50,29 @@ func TestRouter_Get(t *testing.T) {
 		ServeFiles(w, r)
 	})
 	log.Fatal(http.ListenAndServe(":8181", mux))
+}
+
+func TestHttpInvoke(t *testing.T) {
+
+	url := "http://rdctest.rastyletech.com:2222/api/getdata/devsensordata"
+
+	postData := make(map[string]interface{})
+
+	postData["deviceList"] = []string{"00124B001D78D48A"}
+
+	by, _ := json.Marshal(postData)
+
+	fmt.Println(string(by))
+
+	resp, err := http.Post(url, "application/json", strings.NewReader(string(by)))
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	defer resp.Body.Close()
+	ret, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	fmt.Println(string(ret))
 }
