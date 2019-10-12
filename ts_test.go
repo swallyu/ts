@@ -21,9 +21,21 @@ func TestApp_Get(t *testing.T) {
 	app := NewApp()
 
 	app.Router().Get("/user", func(ctx *Context) {
-		ctx.Text("sdef")
-	})
 
+		postData := make(map[string]interface{})
+
+		_ = ctx.BindJSON(&postData)
+
+		data := make(map[string]interface{})
+		data["code"] = 200
+		data["msg"] = "messages"
+		data["data"] = []string{"ss", "bb"}
+
+		ctx.JSON(200, data)
+	})
+	app.Router().Get("/{file:.+}", func(ctx *Context) {
+		ServeFiles(ctx.resp, ctx.Req)
+	})
 	error := http.ListenAndServe(":8888", app)
 	if error != nil {
 		fmt.Println(error.Error())

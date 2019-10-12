@@ -44,7 +44,8 @@ func (e *RouterGroup) Patch(path string, h HandleFunc) {
 func (e *RouterGroup) handleRequest(w http.ResponseWriter, r *http.Request, h HandleFunc) {
 	c := e.app.pool.Get().(*Context)
 	c.Req = r
-	c.resp = w
+	c.resp.reset(w)
+	c.reset()
 	h(c)
 	e.app.pool.Put(c)
 }
