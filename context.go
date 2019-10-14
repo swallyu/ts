@@ -1,10 +1,10 @@
 package ts
 
 import (
+	"github.com/swallyu/ts/binding"
+	"github.com/swallyu/ts/render"
 	"net/http"
 	"strings"
-	"ts/binding"
-	"ts/render"
 )
 
 var (
