@@ -52,3 +52,7 @@ func (e *App) Router() *RouterGroup {
 func (e *App) ServeFiles(fileServer http.Handler, ctx *Context) {
 	fileServer.ServeHTTP(ctx.resp, ctx.Req)
 }
+
+func (e *App) ServeFile(ctx *Context, path string) {
+	http.ServeFile(ctx.resp, ctx.Req, path)
+}
