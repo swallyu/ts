@@ -1,4 +1,4 @@
-module ts
+module github.com/swallyu/ts
 
 go 1.12
 
