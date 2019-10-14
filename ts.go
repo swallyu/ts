@@ -48,3 +48,7 @@ func (e *App) Group(group string) *RouterGroup {
 func (e *App) Router() *RouterGroup {
 	return e.router
 }
+
+func (e *App) ServeFiles(fileServer http.Handler, ctx *Context) {
+	fileServer.ServeHTTP(ctx.resp, ctx.Req)
+}
