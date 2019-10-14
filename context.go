@@ -2,8 +2,13 @@ package ts
 
 import (
 	"net/http"
+	"strings"
 	"ts/binding"
 	"ts/render"
+)
+
+var (
+	MULTI_FORM = "multipart/form-data"
 )
 
 type Context struct {
@@ -65,6 +70,27 @@ func (c *Context) Render(code int, r render.Render) {
 
 func (c *Context) reset() {
 
+}
+
+func (c *Context) Path(name string) string {
+	return GetParam(c.Req, name)
+}
+
+func (c *Context) Query(name string) string {
+	c.parseForm()
+	return c.Req.Form.Get(name)
+}
+
+func (c *Context) Form(name string) string {
+	c.parseForm()
+	return c.Req.PostFormValue(name)
+}
+
+func (c *Context) parseForm() {
+	if strings.Contains(c.Req.Header.Get("Content-Type"), MULTI_FORM) {
+		_ = c.Req.ParseMultipartForm(32 << 20)
+	}
+	_ = c.Req.ParseForm()
 }
 
 func bodyAllowedForStatus(status int) bool {

@@ -20,7 +20,11 @@ func TestApp_Get(t *testing.T) {
 
 	app := NewApp()
 
-	app.Router().Get("/user", func(ctx *Context) {
+	app.Router().Post("/user", func(ctx *Context) {
+
+		fmt.Println(ctx.Req.Header.Get("Content-Type"))
+		value := ctx.Form("name")
+		fmt.Println("value is :" + value)
 
 		postData := make(map[string]interface{})
 
